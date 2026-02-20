@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>考试计时系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>专业考务计时系统</title>
     <style>
         :root {
             --bg-color: #f5f5f7; 
@@ -11,7 +11,8 @@
             --text-sec: #86868b;
             --line-color: rgba(0, 0, 0, 0.1);
             --accent-color: #000000;
-            --wheel-item-h: 120px;
+            /* 将固定像素改为基于视口高度的单位，防止超出屏幕 */
+            --wheel-item-h: 12vh; 
         }
 
         * {
@@ -20,6 +21,8 @@
             -webkit-user-select: none;
             margin: 0;
             padding: 0;
+            /* 解决 GitHub Pages 等环境可能的文字自动放大问题 */
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -27,6 +30,7 @@
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
             height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -36,7 +40,7 @@
 
         /* ----- 核心主体：大数字时钟 ----- */
         .clock-section {
-            flex: 1; 
+            flex: 1.2; 
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -47,7 +51,8 @@
         }
 
         #main-clock {
-            font-size: 15rem; 
+            /* 使用 vmin 确保时钟在横屏和竖屏都能自适应放大 */
+            font-size: 25vmin; 
             font-weight: 600;
             letter-spacing: -0.03em;
             font-variant-numeric: tabular-nums;
@@ -55,10 +60,10 @@
         }
 
         #current-subject-display {
-            font-size: 2.5rem;
+            font-size: 4vmin;
             font-weight: 500;
             letter-spacing: 0.05em;
-            margin-top: 10px;
+            margin-top: 1vh;
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.6s ease;
@@ -75,9 +80,10 @@
             justify-content: center;
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
+            padding-bottom: 2vh;
         }
 
-        /* ----- 滚轮配置区 (一体化无边框设计) ----- */
+        /* ----- 滚轮配置区 ----- */
         #config-area {
             display: flex;
             flex-direction: column;
@@ -88,8 +94,8 @@
 
         .wheels-row {
             display: flex;
-            gap: 40px;
-            margin-bottom: 50px;
+            gap: 4vw;
+            margin-bottom: 4vh;
         }
 
         .wheel-group {
@@ -99,9 +105,9 @@
         }
 
         .wheel-label {
-            font-size: 1.1rem;
+            font-size: 2vmin;
             color: var(--text-sec);
-            margin-bottom: 20px;
+            margin-bottom: 1.5vh;
             font-weight: 600;
             letter-spacing: 1px;
         }
@@ -109,7 +115,9 @@
         .wheel-viewport {
             position: relative;
             height: calc(var(--wheel-item-h) * 3);
-            width: 160px;
+            width: 15vw;
+            min-width: 100px;
+            max-width: 200px;
             overflow: hidden;
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
@@ -131,7 +139,7 @@
             align-items: center;
             justify-content: center;
             scroll-snap-align: center;
-            font-size: 2.4rem;
+            font-size: 4vmin;
             color: #b0b0b5;
             font-weight: 600;
             transition: color 0.3s, transform 0.3s;
@@ -161,12 +169,12 @@
             transition: all 0.8s ease;
         }
         #status-info {
-            font-size: 1.8rem;
+            font-size: 3vmin;
             color: var(--text-sec);
-            margin-bottom: 10px;
+            margin-bottom: 1vh;
         }
         #countdown-display {
-            font-size: 8rem;
+            font-size: 15vmin;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
             color: var(--text-main);
@@ -177,9 +185,9 @@
             background: var(--accent-color);
             color: white;
             border: none;
-            padding: 20px 80px;
+            padding: 2.5vh 8vw;
             border-radius: 50px;
-            font-size: 1.8rem;
+            font-size: 3.5vmin;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -188,27 +196,27 @@
         .primary-btn:active { transform: scale(0.95); }
 
         #restart-trigger {
-            margin-top: 30px;
+            margin-top: 4vh;
             background: rgba(0,0,0,0.05);
             color: var(--text-main);
-            padding: 12px 40px;
-            font-size: 1.2rem;
+            padding: 1.5vh 40px;
+            font-size: 2vmin;
             box-shadow: none;
         }
 
         /* ----- 状态切换逻辑 ----- */
         body.is-running .clock-section {
-            flex: 0 0 65%;
+            flex: 1.8; 
         }
         body.is-running #main-clock {
-            font-size: 22rem; 
+            font-size: 35vmin; 
         }
         body.is-running #current-subject-display {
             opacity: 1;
             transform: translateY(0);
         }
         body.is-running .bottom-section {
-            flex: 0 0 35%;
+            flex: 1;
             justify-content: flex-start;
         }
         body.is-running #running-area {
@@ -277,10 +285,19 @@
     <script>
         const subjectList = ['语文', '数学', '英语', '物理', '化学', '生物', '政治', '历史', '地理'];
         const durationList = Array.from({length: 22}, (_, i) => 30 + i * 10);
-        const ITEM_H = 120;
+        
+        // 动态计算当前的 ITEM_H
+        let ITEM_H = 0;
+        function updateItemHeight() {
+            const temp = document.createElement('div');
+            temp.style.height = 'var(--wheel-item-h)';
+            document.body.appendChild(temp);
+            ITEM_H = temp.offsetHeight;
+            document.body.removeChild(temp);
+        }
+
         let timeOffset = 0;
 
-        // --- 时间校准：确保主时钟和逻辑时间完全一致 ---
         async function syncTime() {
             try {
                 const start = Date.now();
@@ -288,28 +305,24 @@
                 const serverDate = res.headers.get('Date');
                 if (serverDate) {
                     const serverTime = new Date(serverDate).getTime();
-                    // 抵消网络请求耗时
                     timeOffset = (serverTime + (Date.now() - start)/2) - Date.now();
                 }
             } catch (e) {
-                console.warn("无法同步服务器时间，将使用本地系统时间。");
+                console.warn("无法同步服务器时间。");
             }
         }
 
-        // 全局唯一的时间获取接口
         function getNow() { 
             return new Date(Date.now() + timeOffset); 
         }
 
         function refreshClock() {
             const now = getNow();
-            // 采用统一的 getNow()，主时钟与倒计时逻辑将完全同步
             document.getElementById('main-clock').innerText = 
                 now.toTimeString().split(' ')[0];
         }
         setInterval(refreshClock, 200);
 
-        // --- 滚轮物理模拟 ---
         function setupWheel(id, data) {
             const el = document.getElementById(id);
             el.innerHTML = '<div class="wheel-item empty"></div>' + 
@@ -322,6 +335,7 @@
 
             el.addEventListener('pointerdown', (e) => {
                 isDown = true;
+                updateItemHeight(); // 每次点击时校准高度，防止窗口缩放导致计算错误
                 el.setPointerCapture(e.pointerId);
                 startY = e.pageY - el.offsetTop;
                 scrollTop = el.scrollTop;
@@ -342,7 +356,9 @@
                         momentumId = requestAnimationFrame(momentumLoop);
                     } else {
                         el.style.scrollSnapType = 'y mandatory';
-                        el.scrollTop += 1; el.scrollTop -= 1; 
+                        // 强制吸附
+                        const target = Math.round(el.scrollTop / ITEM_H) * ITEM_H;
+                        el.scrollTo({ top: target, behavior: 'smooth' });
                     }
                 };
                 momentumLoop();
@@ -378,6 +394,7 @@
         }
 
         function setWheelIndex(id, idx, smooth=true) {
+            updateItemHeight();
             const el = document.getElementById(id);
             el.scrollTo({ top: idx * ITEM_H, behavior: smooth ? 'smooth' : 'auto' });
             setTimeout(() => {
@@ -388,6 +405,7 @@
         }
 
         function init() {
+            updateItemHeight();
             setupWheel('w-subject', subjectList);
             setupWheel('w-hour', Array.from({length: 24}, (_, i) => String(i).padStart(2, '0')));
             setupWheel('w-min', Array.from({length: 60}, (_, i) => String(i).padStart(2, '0')));
@@ -428,7 +446,7 @@
             document.body.classList.add('is-running');
 
             runTimer = setInterval(() => {
-                const _now = getNow(); // 同样使用同步后的时间
+                const _now = getNow();
                 const info = document.getElementById('status-info');
                 const count = document.getElementById('countdown-display');
 
@@ -457,6 +475,7 @@
 
         document.getElementById('restart-trigger').onclick = () => window.location.reload();
         window.onload = init;
+        window.onresize = updateItemHeight;
     </script>
 </body>
 </html>
